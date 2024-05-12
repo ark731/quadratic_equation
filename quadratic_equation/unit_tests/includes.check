@@ -1,0 +1,6 @@
+#include <check.h>
+
+#include "../quadratic_equation.h"
+
+#define CK_FORK 0
+

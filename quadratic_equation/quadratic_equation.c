@@ -123,6 +123,7 @@ static inline void find_quadratic_roots(coefficients_ *coef,
   } else if (coef->discriminant == 0.) {  // DISCRIMINANT = 0
     find_root_of_exhausted_equation(coef, roots);
   } else {  //                               DISCRIMINANT < 0
+    roots->status_message = MESSAGE_SOLVE_EQUATION_OK;  // no roots is still OK
     no_roots_write_nans(roots);
   }
 }
@@ -160,7 +161,9 @@ static inline void recalculate_smaller_root_with_higher_precision(
    * the other root using Vieta's theorem. Put root with larger absolute value
    * into root[1], then recaltulate root[0]. */
   roots->status_message = MESSAGE_SOLVE_EQUATION_OK;
-  roots->root[1] = fmax_(fabs_(roots->root[0]), fabs_(roots->root[1]));
+  roots->root[1] = (fabs_(roots->root[0]) > fabs_(roots->root[1]))
+                       ? roots->root[0]
+                       : roots->root[1];
   roots->root[0] = coef->c / (coef->a * roots->root[1]);
   check_roots_validity(roots);
 }

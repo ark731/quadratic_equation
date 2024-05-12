@@ -64,7 +64,7 @@ check: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
 $(TEST_EXEC): $(TEST_OBJECTS) $(TEST_LIB)
-	@$(MAKE) unittests_nofork
+	$(MAKE) unittests_nofork
 	$(CC) $(FLAGS) $(OPTFLAGS) $(TEST_OBJECTS) -o $@ \
 	$(CHFLAGS) $(EXTRAFLAGS) $(TEST_LIB) $(GOFLAGS) $(QUADMATH_FLAGS)
 

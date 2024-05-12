@@ -6,7 +6,7 @@ double b = 124.12424;
 double c = -4.54;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 #test test_errors_2
 double a = 5387873.587;
@@ -14,7 +14,7 @@ double b = 124.12424;
 double c = -NAN;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 #test test_errors_3
 double a = 835293.958;
@@ -22,7 +22,7 @@ double b = INFINITY;
 double c = -4.54;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 #test test_errors_4
 double a = 835293.958;
@@ -30,7 +30,7 @@ double b = 15346.245;
 double c = -INFINITY;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 #test test_errors_5
 double a = 0.0;

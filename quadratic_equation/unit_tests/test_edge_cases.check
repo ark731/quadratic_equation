@@ -1,0 +1,43 @@
+#suite test_edge_cases
+
+#test test_edge_cases1
+double a = __DBL_MAX__;
+double b = __DBL_MAX__;
+double c = __DBL_MAX__;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases2
+double a = 0;
+double b = __DBL_MAX__;
+double c = __DBL_MAX__;
+double x1 = -1.0;
+double x2 = -1.0;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases3
+double a = __DBL_MAX__;
+double b = __DBL_MAX__;
+double c = -__DBL_MAX__;
+double x1 = 0.618033988749894;
+double x2 = -1.618033988749894;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases4
+double a = __DBL_MAX__ / 10.;
+double b = __DBL_MAX__;
+double c = -__DBL_MAX__;
+double x1 = 0.916079783099616;
+double x2 = -10.916079783099616;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);

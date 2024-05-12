@@ -17,19 +17,6 @@ extern "C" {
 /*  ------------------------------------------------------------------------  */
 ////////////////////////////////////////////////////////////////////////////////
 
-/*  ---------------------------- RESULT STRUCT -----------------------------  */
-/// @brief Structure holds equation roots, number of roots and execution status
-/// @param root[2] Roots.
-/// @param num_roots Number of roots found. 3 - infinite number of roots.
-/// @param err Execution status.
-/// @param error_message Message for given execution status.
-typedef struct quadratic_equation_result_struct {
-  double root[2];
-  int num_roots;
-  solve_equation_return_status err;
-  const char* status_message;
-} quadratic_roots;
-
 /*  ---------------------------- RETURN STATUS -----------------------------  */
 /// @brief Execution status.
 /// OK = 0.
@@ -43,6 +30,19 @@ typedef enum {
   ERROR_INFINITE_NUMBER_OF_ROOTS,
   UNKNOWN_ERROR
 } solve_equation_return_status;
+
+/*  ---------------------------- RESULT STRUCT -----------------------------  */
+/// @brief Structure holds equation roots, number of roots and execution status
+/// @param root[2] Roots.
+/// @param num_roots Number of roots found. 3 - infinite number of roots.
+/// @param err Execution status.
+/// @param error_message Message for given execution status.
+typedef struct quadratic_equation_result_struct {
+  double root[2];
+  int num_roots;
+  solve_equation_return_status err;
+  const char* status_message;
+} quadratic_roots;
 
 /*  --------------------------- STATUS MESSAGES ----------------------------  */
 #define MESSAGE_WARNING_INFINITE_NUMBER_OF_ROOTS \

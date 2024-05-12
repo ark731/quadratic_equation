@@ -1,6 +1,23 @@
 #include <check.h>
+#include <math.h>
 
 #include "../quadratic_equation.h"
 
 #define CK_FORK 0
+#define QUADRATIC_TEST_EPSILON 1.0e-15
 
+/* Compare roots to epsilon above. */
+static int compare_roots(double x1, double x2, quadratic_roots *roots) {
+	double tmp;
+	if (roots->root[0] > roots->root[1]) {
+		tmp = roots->root[0];
+		roots->root[0] = roots->root[1];
+		roots->root[1] = tmp;
+	}
+	if (x1 > x2) {
+		tmp = x1;
+		x1 = x2;
+		x2 = tmp;
+	}
+	return (fabs(x1 - roots->root[0]) < QUADRATIC_TEST_EPSILON) && (fabs(x2 - roots->root[1]) < QUADRATIC_TEST_EPSILON);
+}

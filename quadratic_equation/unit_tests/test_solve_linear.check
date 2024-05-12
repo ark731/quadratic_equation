@@ -1,0 +1,12 @@
+#suite test_solve_linear
+
+#test test_solve_linear1
+double a = 0;
+double b = 7;
+double c = -3;
+double x1 = 0.428571428571428;
+double x2 = 0.428571428571428;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);

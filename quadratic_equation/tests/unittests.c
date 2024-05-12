@@ -6,11 +6,85 @@
 #include <check.h>
 
 #include <check.h>
+#include <math.h>
 
 #include "../quadratic_equation.h"
 
 #define CK_FORK 0
+#define QUADRATIC_TEST_EPSILON 1.0e-15
 
+/* Compare roots to epsilon above. */
+static int compare_roots(double x1, double x2, quadratic_roots *roots) {
+	double tmp;
+	if (roots->root[0] > roots->root[1]) {
+		tmp = roots->root[0];
+		roots->root[0] = roots->root[1];
+		roots->root[1] = tmp;
+	}
+	if (x1 > x2) {
+		tmp = x1;
+		x1 = x2;
+		x2 = tmp;
+	}
+	return (fabs(x1 - roots->root[0]) < QUADRATIC_TEST_EPSILON) && (fabs(x2 - roots->root[1]) < QUADRATIC_TEST_EPSILON);
+}
+
+START_TEST(test_edge_cases1)
+{
+double a = __DBL_MAX__;
+double b = __DBL_MAX__;
+double c = __DBL_MAX__;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases2)
+{
+double a = 0;
+double b = __DBL_MAX__;
+double c = __DBL_MAX__;
+double x1 = -1.0;
+double x2 = -1.0;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases3)
+{
+double a = __DBL_MAX__;
+double b = __DBL_MAX__;
+double c = -__DBL_MAX__;
+double x1 = 0.618033988749894;
+double x2 = -1.618033988749894;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases4)
+{
+double a = __DBL_MAX__ / 10.;
+double b = __DBL_MAX__;
+double c = -__DBL_MAX__;
+double x1 = 0.916079783099616;
+double x2 = -10.916079783099616;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+}
+END_TEST
 
 START_TEST(test_errors_1)
 {
@@ -19,7 +93,7 @@ double b = 124.12424;
 double c = -4.54;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 }
 END_TEST
@@ -31,7 +105,7 @@ double b = 124.12424;
 double c = -NAN;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 }
 END_TEST
@@ -43,7 +117,7 @@ double b = INFINITY;
 double c = -4.54;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 }
 END_TEST
@@ -55,7 +129,7 @@ double b = 15346.245;
 double c = -INFINITY;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
-ck_assert_int_eq(INVALID_ARGUMENTS, roots.err);
+ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
 }
 END_TEST
@@ -71,19 +145,66 @@ ck_assert_int_eq(1, (roots.err == ERROR_INFINITE_NUMBER_OF_ROOTS) || (roots.err 
 }
 END_TEST
 
+START_TEST(test_solve_linear1)
+{
+double a = 0;
+double b = 7;
+double c = -3;
+double x1 = 0.428571428571428;
+double x2 = 0.428571428571428;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+}
+END_TEST
+
+START_TEST(test_solve_quadratic1)
+{
+double a = 5;
+double b = 7;
+double c = -3;
+double x1 = 0.344030650891055;
+double x2 = -1.744030650891055;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(OK, roots.err);
+}
+END_TEST
+
 int main(void)
 {
-    Suite *s1 = suite_create("test_errors_");
-    TCase *tc1_1 = tcase_create("test_errors_");
+    Suite *s1 = suite_create("test_edge_cases");
+    TCase *tc1_1 = tcase_create("test_edge_cases");
+    Suite *s2 = suite_create("test_errors_");
+    TCase *tc2_1 = tcase_create("test_errors_");
+    Suite *s3 = suite_create("test_solve_linear");
+    TCase *tc3_1 = tcase_create("test_solve_linear");
+    Suite *s4 = suite_create("test_solve_quadratic");
+    TCase *tc4_1 = tcase_create("test_solve_quadratic");
     SRunner *sr = srunner_create(s1);
     int nf;
 
     suite_add_tcase(s1, tc1_1);
-    tcase_add_test(tc1_1, test_errors_1);
-    tcase_add_test(tc1_1, test_errors_2);
-    tcase_add_test(tc1_1, test_errors_3);
-    tcase_add_test(tc1_1, test_errors_4);
-    tcase_add_test(tc1_1, test_errors_5);
+    tcase_add_test(tc1_1, test_edge_cases1);
+    tcase_add_test(tc1_1, test_edge_cases2);
+    tcase_add_test(tc1_1, test_edge_cases3);
+    tcase_add_test(tc1_1, test_edge_cases4);
+    suite_add_tcase(s2, tc2_1);
+    tcase_add_test(tc2_1, test_errors_1);
+    tcase_add_test(tc2_1, test_errors_2);
+    tcase_add_test(tc2_1, test_errors_3);
+    tcase_add_test(tc2_1, test_errors_4);
+    tcase_add_test(tc2_1, test_errors_5);
+    suite_add_tcase(s3, tc3_1);
+    tcase_add_test(tc3_1, test_solve_linear1);
+    suite_add_tcase(s4, tc4_1);
+    tcase_add_test(tc4_1, test_solve_quadratic1);
+
+    srunner_add_suite(sr, s2);
+    srunner_add_suite(sr, s3);
+    srunner_add_suite(sr, s4);
 
     srunner_set_fork_status(sr, CK_NOFORK);
 

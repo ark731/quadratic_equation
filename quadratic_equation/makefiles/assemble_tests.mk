@@ -21,28 +21,24 @@ COMBINED_FILE=$(UNITTESTS_FOLDER)/_unittests.check
 CHECK_FILES=$(filter-out $(CHECK_INCLUDES) $(COMBINED_FILE), $(wildcard $(UNITTESTS_FOLDER)/*.check))
 
 
-unittests_nofork: $(TESTS)
+unittests_nofork: $(TEST_DIR)/$(TESTS)
 ifeq ($(shell uname -s), Linux)
-	@sed -i 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $(TEST_DIR)/$^
+	@sed -i 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $^
 endif
 ifeq ($(shell uname -s), Darwin)
-	@sed -i '' 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $(TEST_DIR)/$^
+	@sed -i '' 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $^
 endif
-	@cd $(TEST_DIR)
 	@if [ -x "$(shell command -v clang-format)" ]; then \
 		$(MAKE) style-fix; \
 	fi
-	@cd -
 
-$(TESTS): $(COMBINED_FILE)
+$(TEST_DIR)/$(TESTS): $(COMBINED_FILE)
 	@mkdir -p $(TEST_DIR)
-	checkmk clean_mode=1 $(COMBINED_FILE) > $(TEST_DIR)/$@
+	checkmk clean_mode=1 $(COMBINED_FILE) > $@
 	@rm -f $(COMBINED_FILE)
-	@cd $(TEST_DIR)
 	@if [ -x "$(shell command -v clang-format)" ]; then \
 		$(MAKE) style-fix; \
 	fi
-	@cd -
 
 $(COMBINED_FILE): $(CHECK_INCLUDES) $(CHECK_FILES)
 	@echo ==COMBINING '.check' FILES==

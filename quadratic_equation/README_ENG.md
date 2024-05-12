@@ -27,7 +27,7 @@ typedef struct quadratic_equation_result_struct {
 } quadratic_roots;
 ```
 * `double root[2]`: An array storing roots of the equation. If equation has only one root, both cells will be equal. If equation has no roots, array will hold NaN values.
-* `int num_roots`: The number of roots found, which can be 0, 1 or 2. **There is special case** when all coefficients are 0 and equation has infinite number of roots. In this case, function will either return **\`num_roots = 0\`** and error or **\`num_roots = 3\`** and warning. **This can be configured in config section in header file**, by default it will return 0 and error.
+* `int num_roots`: The number of roots found, which can be 0, 1 or 2. **There is a special case** where all coefficients are 0 and equation has infinite number of roots. In this case, function will either return **\`num_roots = 0\`** and error or **\`num_roots = 3\`** and warning. **This can be configured in config section in header file**, by default it will return 0 and error.
 * `solve_equation_return_status err`: Result status code. **0 indicates success, negative values indicate warnings, positive values indicate errors.**
 * `const char* status_message`: Pointer to string literal with message for result status code.
 

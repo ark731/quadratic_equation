@@ -224,8 +224,8 @@ static inline coefficients_ store_coefficients(double a, double b, double c) {
 }
 
 /* This function will be called only if long double is an alias for double.
- * It is still tested and I recommend to keep it around. To test it again,
- * simply redefine extra_precise_t as typedef for 'double'
+ * It is well tested and I recommend to keep it around. To test it again,
+ * simply redefine extra_precise_t as typedef for 'double'.
  */
 static inline void normalize_coefficients(coefficients_ *coef) {
   extra_precise_t scaler =

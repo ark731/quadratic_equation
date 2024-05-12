@@ -7,6 +7,7 @@ double c = __DBL_MAX__;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
 #test test_edge_cases2
@@ -18,6 +19,7 @@ double x2 = -1.0;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(1, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
 #test test_edge_cases3
@@ -29,6 +31,7 @@ double x2 = -1.618033988749894;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
 #test test_edge_cases4
@@ -40,4 +43,29 @@ double x2 = -10.916079783099616;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases5
+double a = __DBL_DENORM_MIN__;
+double b = 0;
+double c = -100;
+double x1 = 4.498913794543196e+162;
+double x2 = -4.498913794543196e+162;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases6
+double a = __DBL_DENORM_MIN__;
+double b = 0;
+double c = -1.0e280;
+double x1 = 4.498913794543197e+301;
+double x2 = -4.498913794543197e+301;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);

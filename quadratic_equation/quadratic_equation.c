@@ -45,15 +45,14 @@ static inline coefficients_ store_coefficients(double a, double b, double c);
 static inline void normalize_coefficients(coefficients_ *coef);
 static inline void calculate_discriminant(coefficients_ *coef);
 static inline int discriminant_is_still_invalid(const coefficients_ *coef);
-static inline int pick_numerically_stable_formula(const coefficients_ *coef);
-static inline void use_default_formula(const coefficients_ *coef,
+static inline void calculate_two_roots(const coefficients_ *coef,
                                        quadratic_roots *roots);
-static inline void use_other_formula(const coefficients_ *coef,
+static inline void try_other_formula(const coefficients_ *coef,
                                      quadratic_roots *roots);
 static inline void find_quadratic_roots(coefficients_ *coef,
                                         quadratic_roots *roots);
-static inline void find_root_for_zero_discrimnant(const coefficients_ *coef,
-                                                  quadratic_roots *roots);
+static inline void find_root_for_zero_discriminant(const coefficients_ *coef,
+                                                   quadratic_roots *roots);
 static inline void find_linear_root(const coefficients_ *coef,
                                     quadratic_roots *roots);
 static inline void recalculate_smaller_root_with_higher_precision(
@@ -111,18 +110,12 @@ static inline void find_quadratic_roots(coefficients_ *coef,
 
     /* Calculate roots. */
   } else if (coef->discriminant > 0.) {  //  DISCRIMINANT > 0
-    switch (pick_numerically_stable_formula(coef)) {
-      case 1:  // x = (-b ± sqrt(dsc)) / 2*a
-        use_default_formula(coef, roots);
-        break;
-      case 2:  // x = -2*c / (b ± sqrt(dsc))
-        use_other_formula(coef, roots);
-        break;
-      default:  // if someone changed pick_numerically_stable_formula function
-        throw_unknown_error(roots);
+    calculate_two_roots(coef, roots);
+    if (WARNING_ROOT_IS_INFINITY == roots->err) {
+      try_other_formula(coef, roots);
     }
   } else if (coef->discriminant == 0.) {  // DISCRIMINANT = 0
-    find_root_for_zero_discrimnant(coef, roots);
+    find_root_for_zero_discriminant(coef, roots);
   } else {  //                               DISCRIMINANT < 0
     set_no_roots(roots);
   }
@@ -130,26 +123,26 @@ static inline void find_quadratic_roots(coefficients_ *coef,
 
 //
 
-static inline void use_default_formula(const coefficients_ *coef,
+static inline void calculate_two_roots(const coefficients_ *coef,
                                        quadratic_roots *roots) {
   roots->status_message = MESSAGE_SOLVE_EQUATION_OK;
   roots->num_roots = 2;
   roots->root[0] = (-coef->b + coef->sqrt_discriminant) / (2 * coef->a);
   roots->root[1] = (-coef->b - coef->sqrt_discriminant) / (2 * coef->a);
   check_roots_validity(roots);
-  if (roots->err == OK) {
+  if (OK == roots->err) {
     recalculate_smaller_root_with_higher_precision(coef, roots);
   }
 }
 
-static inline void use_other_formula(const coefficients_ *coef,
+static inline void try_other_formula(const coefficients_ *coef,
                                      quadratic_roots *roots) {
   roots->status_message = MESSAGE_SOLVE_EQUATION_OK;
   roots->num_roots = 2;
   roots->root[0] = (-2 * coef->c) / (coef->b + coef->sqrt_discriminant);
   roots->root[1] = (-2 * coef->c) / (coef->b - coef->sqrt_discriminant);
   check_roots_validity(roots);
-  if (roots->err == OK) {
+  if (OK == roots->err) {
     recalculate_smaller_root_with_higher_precision(coef, roots);
   }
 }
@@ -168,8 +161,8 @@ static inline void recalculate_smaller_root_with_higher_precision(
   check_roots_validity(roots);
 }
 
-static inline void find_root_for_zero_discrimnant(const coefficients_ *coef,
-                                                  quadratic_roots *roots) {
+static inline void find_root_for_zero_discriminant(const coefficients_ *coef,
+                                                   quadratic_roots *roots) {
   roots->status_message = MESSAGE_SOLVE_EQUATION_OK;
   roots->num_roots = 1;
   roots->root[0] = -coef->b / (2 * coef->a);
@@ -230,6 +223,10 @@ static inline coefficients_ store_coefficients(double a, double b, double c) {
   return coef;
 }
 
+/* This function will be called only if long double is an alias for double.
+ * It is still tested and I recommend to keep it around. To test it again,
+ * simply redefine extra_precise_t as typedef for 'double'
+ */
 static inline void normalize_coefficients(coefficients_ *coef) {
   extra_precise_t scaler =
       fmax_(fabs_(coef->a), fmax_(fabs_(coef->b), fabs_(coef->c)));
@@ -245,24 +242,6 @@ static inline void calculate_discriminant(coefficients_ *coef) {
 
 static inline int discriminant_is_still_invalid(const coefficients_ *coef) {
   return isinf_(coef->discriminant) || isnan_(coef->discriminant);
-}
-
-static inline int pick_numerically_stable_formula(const coefficients_ *coef) {
-  /* Common conditions to switch to other formula would be:
-   * coefficient b has large magnitude compared to coefficient a:
-   * |b| > 2|a| * sqrt(smallest represented number > 0)
-   * OR:
-   * discriminant is very close to 0:
-   * |discriminant| < 100 * epsilon
-   *  */
-  int choice;
-  if ((fabs_(coef->b) > 2 * fabs_(coef->a) * sqrt(__DBL_DENORM_MIN__)) ||
-      (fabs_(coef->discriminant) < 100 * __DBL_EPSILON__)) {
-    choice = 2;  // formula stable for low discriminant or large |b| magnitude
-  } else {
-    choice = 1;  // default formula
-  }
-  return choice;
 }
 
 static inline void check_roots_validity(quadratic_roots *roots) {

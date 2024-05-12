@@ -1,6 +1,6 @@
-#suite test_errors_
+#suite test_errors
 
-#test test_errors_1
+#test test_errors1
 double a = NAN;
 double b = 124.12424;
 double c = -4.54;
@@ -8,7 +8,7 @@ quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
-#test test_errors_2
+#test test_errors2
 double a = 5387873.587;
 double b = 124.12424;
 double c = -NAN;
@@ -16,7 +16,7 @@ quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
-#test test_errors_3
+#test test_errors3
 double a = 835293.958;
 double b = INFINITY;
 double c = -4.54;
@@ -24,7 +24,7 @@ quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
-#test test_errors_4
+#test test_errors4
 double a = 835293.958;
 double b = 15346.245;
 double c = -INFINITY;
@@ -32,10 +32,18 @@ quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(INVALID_COEFFICIENTS, roots.err);
 
-#test test_errors_5
+#test test_errors5
 double a = 0.0;
 double b = 0.0;
 double c = 0.0;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, (roots.err == ERROR_INFINITE_NUMBER_OF_ROOTS) || (roots.err == WARNING_INFINITE_NUMBER_OF_ROOTS));
+
+#test test_errors6
+double a = __DBL_DENORM_MIN__;
+double b = 0;
+double c = -__DBL_MAX__;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, (roots.err == WARNING_ROOT_IS_INFINITY));

@@ -9,4 +9,29 @@ double x2 = 0.428571428571428;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(1, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_linear2
+double a = 0;
+double b = 5;
+double c = -10;
+double x1 = 2;
+double x2 = 2;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(1, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_linear3
+double a = 0;
+double b = 3;
+double c = -4;
+double x1 = 1.3333333333333333;
+double x2 = 1.3333333333333333;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(1, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);

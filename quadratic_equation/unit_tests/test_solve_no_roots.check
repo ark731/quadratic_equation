@@ -1,0 +1,21 @@
+#suite test_solve_no_roots
+
+#test test_solve_no_roots1
+double a = 0;
+double b = 0;
+double c = -1;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_no_roots2
+double a = 0;
+double b = 0;
+double c = 5;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);

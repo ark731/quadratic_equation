@@ -1,6 +1,7 @@
 # Quadratic equation solving module
 This module will solve quadratic equations in real numbers and provide better precision than regular solutions in edge cases.
 
+### Файл README на русском языке находится в папке quadratic_equation.
 
 ## Usage
 Simply add this module to your C/C++ project, include header file and add dependencies:

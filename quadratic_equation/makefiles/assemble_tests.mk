@@ -21,7 +21,7 @@ COMBINED_FILE=$(UNITTESTS_FOLDER)/_unittests.check
 CHECK_FILES=$(filter-out $(CHECK_INCLUDES) $(COMBINED_FILE), $(wildcard $(UNITTESTS_FOLDER)/*.check))
 
 
-unittests_nofork: $(TEST_DIR)/$(TESTS)
+unittests: $(TEST_DIR)/$(TESTS)
 ifeq ($(shell uname -s), Linux)
 	@sed -i 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $^
 endif
@@ -66,4 +66,4 @@ test_numbering:
 	done
 
 #  /////////////////////  EXTRAS  //////////////////////
-.PHONY: $(COMBINED_FILE) $(TESTS) unittests_nofork test_numbering
+.PHONY: $(COMBINED_FILE) $(TESTS) unittests test_numbering

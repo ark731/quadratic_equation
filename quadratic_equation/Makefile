@@ -41,7 +41,7 @@ FLAGS = -Wall -Werror -Wextra -std=c11
 OPTFLAGS = -g -pedantic
 GFLAGS = -fprofile-arcs -ftest-coverage
 EXTRAFLAGS = -lm
-GOFLAGS = -lgcov
+GCOVFLAGS = -lgcov
 IN_FLAGS = $(shell pkg-config --cflags check)
 CHFLAGS = $(shell pkg-config --cflags --libs check)
 QUADMATH_FLAGS = -lquadmath
@@ -64,9 +64,8 @@ check: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
 $(TEST_EXEC): $(TEST_OBJECTS) $(TEST_LIB)
-	$(MAKE) unittests_nofork
 	$(CC) $(FLAGS) $(OPTFLAGS) $(TEST_OBJECTS) -o $@ \
-	$(CHFLAGS) $(EXTRAFLAGS) $(TEST_LIB) $(GOFLAGS) $(QUADMATH_FLAGS)
+	$(CHFLAGS) $(EXTRAFLAGS) $(TEST_LIB) $(GCOVFLAGS) $(QUADMATH_FLAGS)
 
 $(TEST_OBJECTS): $(BUILD_TEST_DIR)/%.o : $(TEST_DIR)/%.c
 	@mkdir -p $(BUILD_TEST_DIR)

@@ -52,14 +52,15 @@ static inline void use_other_formula(const coefficients_ *coef,
                                      quadratic_roots *roots);
 static inline void find_quadratic_roots(coefficients_ *coef,
                                         quadratic_roots *roots);
-static inline void find_root_of_exhausted_equation(const coefficients_ *coef,
-                                                   quadratic_roots *roots);
+static inline void find_root_for_zero_discrimnant(const coefficients_ *coef,
+                                                  quadratic_roots *roots);
 static inline void find_linear_root(const coefficients_ *coef,
                                     quadratic_roots *roots);
 static inline void recalculate_smaller_root_with_higher_precision(
     const coefficients_ *coef, quadratic_roots *roots);
 static inline void check_roots_validity(quadratic_roots *roots);
 static inline void no_roots_write_nans(quadratic_roots *roots);
+static inline void set_no_roots(quadratic_roots *roots);
 static inline void set_infinite_roots(quadratic_roots *roots);
 static inline void throw_unknown_error(quadratic_roots *roots);
 
@@ -86,7 +87,7 @@ quadratic_roots solve_equation(double a, double b, double c) {
   } else if (b) {
     find_linear_root(&coefficients, &roots);
   } else if (c) {
-    no_roots_write_nans(&roots);
+    set_no_roots(&roots);
   } else {  // all arguments are 0, infinite number of roots
     set_infinite_roots(&roots);
   }
@@ -121,10 +122,9 @@ static inline void find_quadratic_roots(coefficients_ *coef,
         throw_unknown_error(roots);
     }
   } else if (coef->discriminant == 0.) {  // DISCRIMINANT = 0
-    find_root_of_exhausted_equation(coef, roots);
+    find_root_for_zero_discrimnant(coef, roots);
   } else {  //                               DISCRIMINANT < 0
-    roots->status_message = MESSAGE_SOLVE_EQUATION_OK;  // no roots is still OK
-    no_roots_write_nans(roots);
+    set_no_roots(roots);
   }
 }
 
@@ -168,8 +168,8 @@ static inline void recalculate_smaller_root_with_higher_precision(
   check_roots_validity(roots);
 }
 
-static inline void find_root_of_exhausted_equation(const coefficients_ *coef,
-                                                   quadratic_roots *roots) {
+static inline void find_root_for_zero_discrimnant(const coefficients_ *coef,
+                                                  quadratic_roots *roots) {
   roots->status_message = MESSAGE_SOLVE_EQUATION_OK;
   roots->num_roots = 1;
   roots->root[0] = -coef->b / (2 * coef->a);
@@ -190,6 +190,11 @@ static inline void no_roots_write_nans(quadratic_roots *roots) {
   roots->num_roots = 0;
   roots->root[0] = 0.0 / 0.0;
   roots->root[1] = 0.0 / 0.0;
+}
+
+static inline void set_no_roots(quadratic_roots *roots) {
+  roots->status_message = MESSAGE_SOLVE_EQUATION_OK;  // no roots is still OK
+  no_roots_write_nans(roots);
 }
 
 static inline void set_infinite_roots(quadratic_roots *roots) {

@@ -8,7 +8,7 @@ Simply add this module to your C/C++ project, include header file and add depend
 2. Include the header file (`#include "quadratic_equation.h"`) in your source code.
 3. Add the required library dependencies to your compilation/linker command:
     * **`libm (-lm)`** is a hard dependency and must be included.
-    * **`libquadmath (-lquadmath)`** is a soft dependency that can be enabled in config section of the header file. If enabled, internal calculations are done with float128, which may improve result precision in rare edge cases. If you use quadmath elsewhere, why not enable it here, too?
+    * **`libquadmath (-lquadmath)`** is a soft dependency that is disabled by default and can be enabled in config section of the header file. If enabled, internal calculations are done with float128, which may improve result precision in rare edge cases. If you use quadmath elsewhere, why not enable it here, too?
 
 Alternatively, you can compile this module into a static library using `make` command and link against the resulting library file.
 

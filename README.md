@@ -1,7 +1,6 @@
 # Quadratic equation solving module
-This module will solve quadratic equations in real numbers and provide better precision than regular solutions in edge cases.
+This module will solve quadratic equations in real numbers and provide better precision than regular solutions and popular online calculators (like WolphramAlpha). It will also detect common problems like discriminant or root going out of range and will try to recalculate roots using normalized coefficients or alternative formula, providing solutions for cases with which other calculators don't work.
 
-### Файл README на русском языке находится в папке quadratic_equation.
 
 ## Usage
 Simply add this module to your C/C++ project, include header file and add dependencies:

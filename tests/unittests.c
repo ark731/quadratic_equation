@@ -11,7 +11,7 @@
 #include "../quadratic_equation.h"
 
 #define CK_FORK 0
-#define QUADRATIC_TEST_EPSILON 1.0e-15
+#define QUADRATIC_TEST_EPSILON __DBL_EPSILON__ * 1000
 
 /* Compare roots to epsilon above. */
 static int compare_roots(double x1, double x2, quadratic_roots *roots) {
@@ -26,7 +26,11 @@ static int compare_roots(double x1, double x2, quadratic_roots *roots) {
 		x1 = x2;
 		x2 = tmp;
 	}
-	return (fabs(x1 - roots->root[0]) < QUADRATIC_TEST_EPSILON) && (fabs(x2 - roots->root[1]) < QUADRATIC_TEST_EPSILON);
+	double eps1 = fmax(fabs(x1), fabs(roots->root[0])) * QUADRATIC_TEST_EPSILON;
+	double eps2 = fmax(fabs(x2), fabs(roots->root[1])) * QUADRATIC_TEST_EPSILON;
+	if (!eps1) eps1 = __DBL_MIN__;
+	if (!eps2) eps2 = __DBL_MIN__;
+	return (fabs(x1 - roots->root[0]) <= eps1) && (fabs(x2 - roots->root[1]) <= eps2);
 }
 
 START_TEST(test_edge_cases1)
@@ -114,6 +118,70 @@ double b = 0;
 double c = -1.0e280;
 double x1 = 4.498913794543197e+301;
 double x2 = -4.498913794543197e+301;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases7)
+{
+double a = -21;
+double b = 8e+150;
+double c = 1.08145e+300;
+double x1 = -1.0579867883597554e+149;
+double x2 = 4.8675105978835645e+149;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases8)
+{
+double a = -0.002;
+double b = 8.0e+149;
+double c = 1.0e+299;
+double x1 = -1.2496096189501535e+149;
+double x2 = 4.0012496096189503e+152;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases9)
+{
+double a = 4.0e-287;
+double b = -1000;
+double c = -8.0e+290;
+double x1 = 2.5775918047351755e+289;
+double x2 = -7.759180473517537e+287;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_edge_cases10)
+{
+double a = 8e+295;
+double b = -1.0e29;
+double c = 0;
+double x1 = 0;
+double x2 = 1.25e-267;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
@@ -355,7 +423,7 @@ double a = 1;
 double b = 1.0e+30;
 double c = -1;
 double x1 = -1.0e+30;
-double x2 = 0;
+double x2 = 1.0e-30;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
@@ -371,7 +439,71 @@ double a = 1;
 double b = -1.0e+30;
 double c = 1;
 double x1 = 1.0e+30;
-double x2 = 0;
+double x2 = 1.0e-30;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic8)
+{
+double a = 21;
+double b = 2121;
+double c = -21212121;
+double x1 = 955.8057437975797;
+double x2 = -1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic9)
+{
+double a = -21;
+double b = 2121;
+double c = 21212121;
+double x1 = -955.8057437975797;
+double x2 = 1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic10)
+{
+double a = 21;
+double b = -2121;
+double c = -21212121;
+double x1 = -955.8057437975797;
+double x2 = 1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic11)
+{
+double a = -21;
+double b = -2121;
+double c = 21212121;
+double x1 = 955.8057437975797;
+double x2 = -1056.8057437975797;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
@@ -383,7 +515,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic8)
+START_TEST(test_solve_quadratic12)
 {
 double a = 1;
 double b = 4;
@@ -399,7 +531,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic9)
+START_TEST(test_solve_quadratic13)
 {
 double a = 1;
 double b = 2;
@@ -415,7 +547,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic10)
+START_TEST(test_solve_quadratic14)
 {
 double a = 1;
 double b = -4;
@@ -431,7 +563,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic11)
+START_TEST(test_solve_quadratic15)
 {
 double a = 1;
 double b = 0;
@@ -449,7 +581,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic12)
+START_TEST(test_solve_quadratic16)
 {
 double a = 1;
 double b = 0;
@@ -463,7 +595,7 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic13)
+START_TEST(test_solve_quadratic17)
 {
 double a = 1;
 double b = -1.0e-18;
@@ -477,11 +609,67 @@ ck_assert_int_eq(OK, roots.err);
 }
 END_TEST
 
-START_TEST(test_solve_quadratic14)
+START_TEST(test_solve_quadratic18)
 {
 double a = 2;
 double b = -2;
 double c = 8;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic19)
+{
+double a = 21;
+double b = 2121;
+double c = 21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic20)
+{
+double a = 21;
+double b = -2121;
+double c = 21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic21)
+{
+double a = -21;
+double b = 2121;
+double c = -21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+}
+END_TEST
+
+START_TEST(test_solve_quadratic22)
+{
+double a = -21;
+double b = -2121;
+double c = -21212121;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
@@ -512,6 +700,10 @@ int main(void)
     tcase_add_test(tc1_1, test_edge_cases4);
     tcase_add_test(tc1_1, test_edge_cases5);
     tcase_add_test(tc1_1, test_edge_cases6);
+    tcase_add_test(tc1_1, test_edge_cases7);
+    tcase_add_test(tc1_1, test_edge_cases8);
+    tcase_add_test(tc1_1, test_edge_cases9);
+    tcase_add_test(tc1_1, test_edge_cases10);
     suite_add_tcase(s2, tc2_1);
     tcase_add_test(tc2_1, test_errors1);
     tcase_add_test(tc2_1, test_errors2);
@@ -541,6 +733,14 @@ int main(void)
     tcase_add_test(tc5_1, test_solve_quadratic12);
     tcase_add_test(tc5_1, test_solve_quadratic13);
     tcase_add_test(tc5_1, test_solve_quadratic14);
+    tcase_add_test(tc5_1, test_solve_quadratic15);
+    tcase_add_test(tc5_1, test_solve_quadratic16);
+    tcase_add_test(tc5_1, test_solve_quadratic17);
+    tcase_add_test(tc5_1, test_solve_quadratic18);
+    tcase_add_test(tc5_1, test_solve_quadratic19);
+    tcase_add_test(tc5_1, test_solve_quadratic20);
+    tcase_add_test(tc5_1, test_solve_quadratic21);
+    tcase_add_test(tc5_1, test_solve_quadratic22);
 
     srunner_add_suite(sr, s2);
     srunner_add_suite(sr, s3);

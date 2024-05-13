@@ -4,7 +4,7 @@
 #include "../quadratic_equation.h"
 
 #define CK_FORK 0
-#define QUADRATIC_TEST_EPSILON 1.0e-15
+#define QUADRATIC_TEST_EPSILON __DBL_EPSILON__ * 1000
 
 /* Compare roots to epsilon above. */
 static int compare_roots(double x1, double x2, quadratic_roots *roots) {
@@ -19,5 +19,9 @@ static int compare_roots(double x1, double x2, quadratic_roots *roots) {
 		x1 = x2;
 		x2 = tmp;
 	}
-	return (fabs(x1 - roots->root[0]) < QUADRATIC_TEST_EPSILON) && (fabs(x2 - roots->root[1]) < QUADRATIC_TEST_EPSILON);
+	double eps1 = fmax(fabs(x1), fabs(roots->root[0])) * QUADRATIC_TEST_EPSILON;
+	double eps2 = fmax(fabs(x2), fabs(roots->root[1])) * QUADRATIC_TEST_EPSILON;
+	if (!eps1) eps1 = __DBL_MIN__;
+	if (!eps2) eps2 = __DBL_MIN__;
+	return (fabs(x1 - roots->root[0]) <= eps1) && (fabs(x2 - roots->root[1]) <= eps2);
 }

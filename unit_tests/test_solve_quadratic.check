@@ -67,7 +67,7 @@ double a = 1;
 double b = 1.0e+30;
 double c = -1;
 double x1 = -1.0e+30;
-double x2 = 0;
+double x2 = 1.0e-30;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
@@ -79,7 +79,55 @@ double a = 1;
 double b = -1.0e+30;
 double c = 1;
 double x1 = 1.0e+30;
-double x2 = 0;
+double x2 = 1.0e-30;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic8
+double a = 21;
+double b = 2121;
+double c = -21212121;
+double x1 = 955.8057437975797;
+double x2 = -1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic9
+double a = -21;
+double b = 2121;
+double c = 21212121;
+double x1 = -955.8057437975797;
+double x2 = 1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic10
+double a = 21;
+double b = -2121;
+double c = -21212121;
+double x1 = -955.8057437975797;
+double x2 = 1056.8057437975797;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic11
+double a = -21;
+double b = -2121;
+double c = 21212121;
+double x1 = 955.8057437975797;
+double x2 = -1056.8057437975797;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
@@ -88,7 +136,7 @@ ck_assert_int_eq(OK, roots.err);
 
 /*  ----- DISCRIMINANT = 0 -----  */
 
-#test test_solve_quadratic8
+#test test_solve_quadratic12
 double a = 1;
 double b = 4;
 double c = 4;
@@ -100,7 +148,7 @@ ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
 ck_assert_int_eq(1, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
-#test test_solve_quadratic9
+#test test_solve_quadratic13
 double a = 1;
 double b = 2;
 double c = 1;
@@ -112,7 +160,7 @@ ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
 ck_assert_int_eq(1, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
-#test test_solve_quadratic10
+#test test_solve_quadratic14
 double a = 1;
 double b = -4;
 double c = 4;
@@ -124,7 +172,7 @@ ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
 ck_assert_int_eq(1, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
-#test test_solve_quadratic11
+#test test_solve_quadratic15
 double a = 1;
 double b = 0;
 double c = 0;
@@ -138,7 +186,7 @@ ck_assert_int_eq(OK, roots.err);
 
 /*  ----- DISCRIMINANT < 0 -----  */
 
-#test test_solve_quadratic12
+#test test_solve_quadratic16
 double a = 1;
 double b = 0;
 double c = 1;
@@ -148,7 +196,7 @@ ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
 ck_assert_int_eq(0, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
-#test test_solve_quadratic13
+#test test_solve_quadratic17
 double a = 1;
 double b = -1.0e-18;
 double c = 1;
@@ -158,10 +206,50 @@ ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
 ck_assert_int_eq(0, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
 
-#test test_solve_quadratic14
+#test test_solve_quadratic18
 double a = 2;
 double b = -2;
 double c = 8;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic19
+double a = 21;
+double b = 2121;
+double c = 21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic20
+double a = 21;
+double b = -2121;
+double c = 21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic21
+double a = -21;
+double b = 2121;
+double c = -21212121;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));
+ck_assert_int_eq(0, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_solve_quadratic22
+double a = -21;
+double b = -2121;
+double c = -21212121;
 quadratic_roots roots;
 roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, isnan(roots.root[0]) && isnan(roots.root[1]));

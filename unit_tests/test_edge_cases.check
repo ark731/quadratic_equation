@@ -69,3 +69,51 @@ roots = solve_equation(a, b, c);
 ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
 ck_assert_int_eq(2, roots.num_roots);
 ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases7
+double a = -21;
+double b = 8e+150;
+double c = 1.08145e+300;
+double x1 = -1.0579867883597554e+149;
+double x2 = 4.8675105978835645e+149;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases8
+double a = -0.002;
+double b = 8.0e+149;
+double c = 1.0e+299;
+double x1 = -1.2496096189501535e+149;
+double x2 = 4.0012496096189503e+152;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases9
+double a = 4.0e-287;
+double b = -1000;
+double c = -8.0e+290;
+double x1 = 2.5775918047351755e+289;
+double x2 = -7.759180473517537e+287;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);
+
+#test test_edge_cases10
+double a = 8e+295;
+double b = -1.0e29;
+double c = 0;
+double x1 = 0;
+double x2 = 1.25e-267;
+quadratic_roots roots;
+roots = solve_equation(a, b, c);
+ck_assert_int_eq(1, compare_roots(x1, x2, &roots));
+ck_assert_int_eq(2, roots.num_roots);
+ck_assert_int_eq(OK, roots.err);

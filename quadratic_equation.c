@@ -3,10 +3,9 @@
 #include <math.h>
 
 /*  ------------------- Pick precision for calculations --------------------  */
-/* Edit CONFIG section in header file to disable quad/extended precision.     */
-/* Make will check for quadmath.h lib and set this to 1 if it is available.   */
+/* Edit CONFIG section in header file to enable quad/extended precision.      */
 #if ENABLE_FLOAT128 == 1 && defined(__SIZEOF_FLOAT128__)
-/* Use quad precision if available.                                           */
+
 #include <quadmath.h>
 typedef __float128 extra_precise_t;
 #define sqrt_ sqrtq
@@ -16,7 +15,7 @@ typedef __float128 extra_precise_t;
 #define isnan_ isnanq
 
 #else
-/* If not, use long double.                                                   */
+
 typedef long double extra_precise_t;
 #define sqrt_ sqrtl
 #define fabs_ fabsl

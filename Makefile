@@ -44,9 +44,12 @@ EXTRAFLAGS = -lm
 GCOVFLAGS = -lgcov
 IN_FLAGS = $(shell pkg-config --cflags check)
 CHFLAGS = $(shell pkg-config --cflags --libs check)
-QUADMATH_FLAGS = -lquadmath
+QUADMATH_FLAGS =
 QUADMATH_LIB_CHECK = $(shell find /usr -name 'libquadmath.a' -print -quit 2>/dev/null)
 QUADMATH_HEADER_CHECK = $(shell find /usr -name 'quadmath.h' -print -quit 2>/dev/null)
+ifeq ($(shell cpp -dM quadratic_equation.h | grep ENABLE_FLOAT128 | cut -d' ' -f3), 1)
+	QUADMATH_FLAGS = -lquadmath
+endif
 ifeq ($(QUADMATH_LIB_CHECK),)
     QUADMATH_FLAGS = -DENABLE_FLOAT128=0
 endif
@@ -67,9 +70,9 @@ $(TEST_EXEC): $(TEST_OBJECTS) $(TEST_LIB)
 	$(CC) $(FLAGS) $(OPTFLAGS) $(TEST_OBJECTS) -o $@ \
 	$(CHFLAGS) $(EXTRAFLAGS) $(TEST_LIB) $(GCOVFLAGS) $(QUADMATH_FLAGS)
 
-$(TEST_OBJECTS): $(BUILD_TEST_DIR)/%.o : $(TEST_DIR)/%.c
+$(TEST_OBJECTS):
 	@mkdir -p $(BUILD_TEST_DIR)
-	$(CC) $(FLAGS) $(IN_FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) $(IN_FLAGS) -c $(TEST_DIR)/$(TESTS) -o $@
 
 $(TEST_LIB): $(TEST_LIB_OBJECTS)
 	ar -rcs $@ $^

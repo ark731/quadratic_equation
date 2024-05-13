@@ -7,6 +7,7 @@
 # External variables:
 #   TEST_DIR  - where to put unit tests source file.
 #   TESTS     - name for unit tests source file.
+#   STYLE     - name for style for clang-format (if clang-format is present).
 #
 # External targets:
 #   style-fix - Soft dependency target that also expects 'clang-format' to be installed.
@@ -29,7 +30,7 @@ ifeq ($(shell uname -s), Darwin)
 	@sed -i '' 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' $^
 endif
 	@if [ -x "$(shell command -v clang-format)" ]; then \
-		$(MAKE) style-fix; \
+		clang-format -i -style=$(STYLE) $(TEST_DIR)/$(TESTS); \
 	fi
 
 $(TEST_DIR)/$(TESTS): $(COMBINED_FILE)
@@ -37,7 +38,7 @@ $(TEST_DIR)/$(TESTS): $(COMBINED_FILE)
 	checkmk clean_mode=1 $(COMBINED_FILE) > $@
 	@rm -f $(COMBINED_FILE)
 	@if [ -x "$(shell command -v clang-format)" ]; then \
-		$(MAKE) style-fix; \
+		clang-format -i -style=$(STYLE) $(TEST_DIR)/$(TESTS); \
 	fi
 
 $(COMBINED_FILE): $(CHECK_INCLUDES) $(CHECK_FILES)
@@ -66,4 +67,4 @@ test_numbering:
 	done
 
 #  /////////////////////  EXTRAS  //////////////////////
-.PHONY: $(COMBINED_FILE) $(TESTS) unittests test_numbering
+.PHONY: $(COMBINED_FILE) $(TEST_DIR)/$(TESTS) unittests test_numbering

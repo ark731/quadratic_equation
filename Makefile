@@ -24,7 +24,6 @@ CC = gcc
 # For M1-M3 macs, force GCC compiler
 ifeq ($(shell uname -p), arm)
 	CC = gcc-13
-	GCOV = gcov-13
 endif
 LIB_SOURCES = $(wildcard *.c)
 LIB_OBJECTS = $(addprefix $(BUILD_DIR)/, $(LIB_SOURCES:.c=.o))

@@ -12,6 +12,9 @@
 #   gcovr - Hard dependency utility that is required for this module to function correctly.
 
 GCOV = gcov
+ifeq ($(shell uname -p), arm)
+	GCOV = gcov-13
+endif
 GCOV_DIR = gcov_report
 OPENOS = vi
 ifeq ($(shell uname -s), Linux)

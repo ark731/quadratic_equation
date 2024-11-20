@@ -1,5 +1,5 @@
 # This module will handle gcov coverage report
-# ///// DEPENDENCIES: /////
+# ////// DEPENDENCIES: //////
 #
 # External variables:
 #   LIB       - name for target that will build library for testing.
